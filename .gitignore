@@ -1,0 +1,6 @@
+/.cache
+/build
+/include
+/lib
+/shaders/*.spv
+compile_commands.json
