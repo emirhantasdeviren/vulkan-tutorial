@@ -146,7 +146,7 @@ namespace TANELORN_ENGINE_NAMESPACE {
 #ifndef TN_RELEASE
         this->create_debug_messenger();
 #endif
-        this->create_surface(window.handle);
+        this->create_surface(window);
         this->create_physical_device();
         this->create_logical_device();
         this->create_swapchain(window);
@@ -243,10 +243,6 @@ namespace TANELORN_ENGINE_NAMESPACE {
         submit_info.pSignalSemaphores = signal_semaphores;
 
         VkResult res = vkQueueSubmit(this->graphics_queue, 1, &submit_info, this->in_flight_fence);
-
-        if (res == VK_SUCCESS) {
-            std::cout << "Successfully submitted draw command buffer." << std::endl;
-        }
 
         VkPresentInfoKHR present_info{};
         present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -390,8 +386,15 @@ namespace TANELORN_ENGINE_NAMESPACE {
         }
     }
 
-    void Renderer::create_surface(GLFWwindow *window) {
-        VkResult res = glfwCreateWindowSurface(this->instance, window, nullptr, &(this->surface));
+    void Renderer::create_surface(const Window &window) {
+        VkWin32SurfaceCreateInfoKHR create_info{};
+        create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        create_info.hinstance = window.get_instance();
+        create_info.hwnd = window.get_raw_handle();
+
+        VkResult res =
+            vkCreateWin32SurfaceKHR(this->instance, &create_info, nullptr, &this->surface);
+
         if (res == VK_SUCCESS) {
             std::cout << "Successfully created surface." << std::endl;
         } else {
@@ -757,10 +760,6 @@ namespace TANELORN_ENGINE_NAMESPACE {
 
         VkResult res = vkBeginCommandBuffer(this->command_buffer, &begin_info);
 
-        if (res == VK_SUCCESS) {
-            std::cout << "Successfully begun recording command buffer." << std::endl;
-        }
-
         VkRenderPassBeginInfo render_pass_info{};
         render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         render_pass_info.renderPass = this->render_pass;
@@ -792,9 +791,6 @@ namespace TANELORN_ENGINE_NAMESPACE {
         vkCmdEndRenderPass(this->command_buffer);
 
         res = vkEndCommandBuffer(this->command_buffer);
-        if (res == VK_SUCCESS) {
-            std::cout << "Successfully ended recording command buffer." << std::endl;
-        }
     }
 
     bool Renderer::are_validation_layers_supported() {
@@ -824,9 +820,8 @@ namespace TANELORN_ENGINE_NAMESPACE {
 
     std::vector<const char *> Renderer::get_required_instance_extensions() {
         uint32_t extension_count;
-        const char **glfw_extensions = glfwGetRequiredInstanceExtensions(&extension_count);
-
-        std::vector<const char *> extensions(glfw_extensions, glfw_extensions + extension_count);
+        std::vector<const char *> extensions{
+            VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_WIN32_SURFACE_EXTENSION_NAME};
 
         if (enable_validations) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);

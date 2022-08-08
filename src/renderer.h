@@ -1,9 +1,10 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
-
 #include "defines.h"
 #include "window.h"
+
+#define VK_USE_PLATFORM_WIN32_KHR
+#include <vulkan/vulkan.h>
 
 #include <vector>
 
@@ -25,7 +26,7 @@ namespace TANELORN_ENGINE_NAMESPACE {
     private:
         void create_instance();
         void create_debug_messenger();
-        void create_surface(GLFWwindow *window);
+        void create_surface(const Window &window);
         void create_physical_device();
         void create_logical_device();
         void create_swapchain(const Window &window);

@@ -1,4 +1,5 @@
-#include <cstdint>
+#include <stdint.h>
+#include <stddef.h>
 
 #define TANELORN_ENGINE_NAMESPACE tn
 

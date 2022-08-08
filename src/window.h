@@ -2,7 +2,7 @@
 
 #include "defines.h"
 
-#include <GLFW/glfw3.h>
+#include <windows.h>
 
 namespace TANELORN_ENGINE_NAMESPACE {
     struct FramebufferSize {
@@ -10,14 +10,26 @@ namespace TANELORN_ENGINE_NAMESPACE {
         i32 height;
     };
 
-    struct Window {
-        GLFWwindow *handle;
-
+    class Window {
+    public:
         Window();
         ~Window();
+
+        Window(const Window &) = delete;
+        Window &operator=(const Window &) = delete;
 
         bool close_requested();
         void poll_events();
         FramebufferSize framebuffer_size() const;
+        HWND get_raw_handle() const;
+        HINSTANCE get_instance() const;
+
+    private:
+        HWND wnd;
+        HINSTANCE instance;
+        bool running;
+
+        static LRESULT CALLBACK
+        main_window_proc(HWND window, UINT message, WPARAM w_param, LPARAM l_param);
     };
 } // namespace TANELORN_ENGINE_NAMESPACE
