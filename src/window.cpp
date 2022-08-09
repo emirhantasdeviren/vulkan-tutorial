@@ -63,7 +63,7 @@ namespace TANELORN_ENGINE_NAMESPACE {
     void Window::poll_events() {
         MSG msg{};
 
-        if (GetMessageA(&msg, nullptr, 0, 0) > 0) {
+        if (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE) > 0) {
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
         }
@@ -113,7 +113,7 @@ namespace TANELORN_ENGINE_NAMESPACE {
                     }
                 } break;
                 default:
-                    return DefWindowProc(window, message, w_param, l_param);
+                    return DefWindowProcA(window, message, w_param, l_param);
             }
         }
 
