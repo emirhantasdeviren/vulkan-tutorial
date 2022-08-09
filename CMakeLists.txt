@@ -19,4 +19,4 @@ target_include_directories(vulkan-tutorial PUBLIC
     "C:\\VulkanSDK\\1.3.216.0\\Include"
 )
 target_link_directories(vulkan-tutorial PUBLIC ${CMAKE_SOURCE_DIR}/lib "C:\\VulkanSDK\\1.3.216.0\\Lib")
-target_link_libraries(vulkan-tutorial PUBLIC glfw3 vulkan-1)
+target_link_libraries(vulkan-tutorial PUBLIC vulkan-1)
